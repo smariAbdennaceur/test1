@@ -1,0 +1,87 @@
+<!-- Step 1: Select subscription parameters -->
+<div *ngIf="currentStep === 1">
+    <h2>Select subscription parameters</h2>
+    <form [formGroup]="subscriptionForm">
+      <div class="form-group">
+        <label for="durationSelect">Duration (months)</label>
+        <select formControlName="duration" class="form-control" id="durationSelect">
+          <option *ngFor="let plan of plans" [value]="plan.duration_months">{{plan.duration_months}} months</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="storageSelect">Storage (GB)</label>
+        <select formControlName="storage" class="form-control" id="storageSelect">
+          <option *ngFor="let option of storageOptions" [value]="option">{{option}} GB</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="upfrontPayment">Upfront payment</label>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" formControlName="upfrontPayment" id="upfrontPayment">
+          <label class="form-check-label" for="upfrontPayment">Yes, I want to pay upfront and get 10% discount</label>
+        </div>
+      </div>
+      <div class="text-right">
+        <button class="btn btn-primary" (click)="goToNextStep()" [disabled]="!subscriptionForm.valid">Next</button>
+      </div>
+    </form>
+  </div>
+  
+  <!-- Step 2: Payment data -->
+  <div *ngIf="currentStep === 2">
+    <h2>Payment data</h2>
+    <form [formGroup]="paymentForm">
+      <div class="form-group">
+        <label for="cardNumberInput">Credit card number</label>
+        <input type="text" formControlName="cardNumber" class="form-control" id="cardNumberInput">
+      </div>
+      <div class="form-row">
+        <div class="col">
+          <label for="expirationInput">Expiration date</label>
+          <input type="text" formControlName="expirationDate" class="form-control" id="expirationInput" placeholder="MM/YY">
+        </div>
+        <div class="col">
+          <label for="securityCodeInput">Security code</label>
+          <input type="text" formControlName="securityCode" class="form-control" id="securityCodeInput">
+        </div>
+      </div>
+      <div class="text-right">
+        <button class="btn btn-primary" (click)="goToNextStep()" [disabled]="!paymentForm.valid">Next</button>
+        <button class="btn btn-secondary" (click)="goToPreviousStep()">Back</button>
+      </div>
+    </form>
+  </div>
+  
+  <!-- Step 3: Confirmation -->
+  <div *ngIf="currentStep === 3">
+    <h2>Confirmation</h2>
+    <p>Summary of the selected subscription:</p>
+    <ul>
+      <li><strong>Duration:</strong> {{ selectedDuration }} months</li>
+      <li><strong>Amount of gigabytes:</strong> {{ selectedStorage }} GB</li>
+      <li><strong>Upfront payment:</strong> {{ upfrontPayment ? 'Yes' : 'No' }}</li>
+      <li><strong>Total price:</strong> ${{ getTotalPrice() }}</li>
+     
+    </ul>
+    <h3>Payment details</h3>
+    <form (ngSubmit)="submitOrder()">
+      <div class="form-group">
+        <label for="ccNumber">Credit Card Number:</label>
+        <input type="text" class="form-control" id="ccNumber" name="ccNumber" [(ngModel)]="creditCardNumber" required>
+      </div>
+      <div class="form-group">
+        <label for="ccExpiration">Expiration Date:</label>
+        <input type="text" class="form-control" id="ccExpiration" name="ccExpiration" [(ngModel)]="creditCardExpiration" required>
+      </div>
+      <div class="form-group">
+        <label for="ccSecurityCode">Security Code:</label>
+        <input type="text" class="form-control" id="ccSecurityCode" name="ccSecurityCode" [(ngModel)]="creditCardSecurityCode" required>
+      </div>
+      <button type="submit" class="btn btn-primary" [disabled]="!termsAndConditions">Confirm Order</button>
+      <div class="form-check">
+        <input type="checkbox" class="form-check-input" id="termsAndConditions" name="termsAndConditions" [(ngModel)]="termsAndConditions" required>
+        <label class="form-check-label" for="termsAndConditions">I agree to the Terms and Conditions</label>
+      </div>
+    </form>
+  </div>
+  
